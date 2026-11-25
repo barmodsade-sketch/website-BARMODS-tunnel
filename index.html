@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doctor Barmods | Clinical VPN Provisioning Console</title>
+  <meta name="description" content="Konsol operasional penyediaan kredensial tunnel SSH, VMess, VLESS, Trojan, dan Shadowsocks dengan pemisahan Trial Publik dan Create Premium.">
+  <meta name="generator" content="Build by konoha">
+  <link rel="icon" href="/barmods-rx-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  </noscript>
+  <style>
+    :root,
+    [data-theme="light"] {
+      --bg-canvas: #F4F7F6;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #E8EFEC;
+      --text-primary: #0F1F1C;
+      --text-secondary: #3B524D;
+      --border-hairline: #CBD8D4;
+      --border-control: #5C7872;
+      --accent-primary: #0B6E5C;
+      --accent-primary-hover: #085648;
+      --accent-primary-tint: #DDF0EC;
+      --btn-primary-text: #FFFFFF;
+      --accent-crimson: #B4232C;
+      --accent-crimson-tint: #FCECEE;
+      --shadow-panel: 0 1px 2px rgba(15, 31, 28, 0.05);
+      color-scheme: light;
+    }
+
+    [data-theme="dark"] {
+      --bg-canvas: #0B1211;
+      --bg-surface: #121D1B;
+      --bg-subtle: #192825;
+      --text-primary: #ECF4F2;
+      --text-secondary: #9BB3AD;
+      --border-hairline: #253A36;
+      --border-control: #62847D;
+      --accent-primary: #2DD4B4;
+      --accent-primary-hover: #5EEAD0;
+      --accent-primary-tint: #13332D;
+      --btn-primary-text: #06231D;
+      --accent-crimson: #F87171;
+      --accent-crimson-tint: #2B1417;
+      --shadow-panel: 0 1px 3px rgba(0, 0, 0, 0.35);
+      color-scheme: dark;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    code,
+    pre,
+    .mono {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Base-layer cursor and keyboard focus affordances */
+    a[href],
+    button:not(:disabled),
+    summary,
+    select:not(:disabled),
+    label[for],
+    input[type="radio"]:not(:disabled),
+    input[type="checkbox"]:not(:disabled),
+    [role="button"]:not([aria-disabled="true"]),
+    [role="tab"]:not([aria-disabled="true"]) {
+      cursor: pointer;
+    }
+
+    button:disabled,
+    select:disabled,
+    input:disabled,
+    [aria-disabled="true"] {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -60px;
+      z-index: 100;
+      padding: 10px 16px;
+      min-height: 44px;
+      background: var(--accent-primary);
+      color: var(--btn-primary-text);
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+
+    .skip-link:focus {
+      top: 12px;
+    }
+
+    .shell-container {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Top Instrument Header */
+    .site-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-hairline);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .header-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .header-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 8px;
+    }
+
+    .brand-text-wrap {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-wordmark {
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .node-status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-hairline);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .node-status-chip[data-state="ready"] .status-dot {
+      background: var(--accent-primary);
+    }
+
+    .node-status-chip[data-state="ready"] {
+      color: var(--text-primary);
+    }
+
+    .node-status-chip[data-state="error"] .status-dot,
+    .node-status-chip[data-state="empty"] .status-dot {
+      background: var(--accent-crimson);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .primary-nav {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 44px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-canvas);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border-color: var(--border-control);
+    }
+
+    .nav-link:active {
+      transform: translateY(1px);
+    }
+
+    .theme-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      min-width: 44px;
+      padding: 8px 12px;
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      border: 1px solid var(--border-control);
+      border-radius: 6px;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: background-color 180ms ease, border-color 180ms ease;
+    }
+
+    .theme-btn:hover {
+      background: var(--bg-subtle);
+    }
+
+    .theme-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Main Content Sections */
+    main {
+      flex: 1;
+    }
+
+    .workbench-section {
+      padding: 28px 0 44px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .workbench-intro {
+      margin-bottom: 24px;
+      max-width: 780px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 2.8vw, 2.15rem);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    .lead-copy {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+    }
+
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .instrument-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 10px;
+      box-shadow: var(--shadow-panel);
+      min-width: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.06rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .panel-code-tag {
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    /* Tier Switcher */
+    .control-block {
+      margin-bottom: 20px;
+    }
+
+    .block-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .tier-card-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      gap: 4px;
+      min-height: 60px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-control);
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font: inherit;
+      transition: background-color 180ms ease, border-color 180ms ease;
+    }
+
+    .tier-card-btn:hover {
+      background: var(--bg-subtle);
+    }
+
+    .tier-card-btn[aria-pressed="true"] {
+      background: var(--accent-primary-tint);
+      border: 2px solid var(--accent-primary);
+      padding: 11px 13px;
+    }
+
+    .tier-card-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tier-card-meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* Protocol Selector */
+    .protocol-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .proto-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 46px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-control);
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font: inherit;
+      font-size: 0.86rem;
+      font-weight: 600;
+      transition: background-color 180ms ease, border-color 180ms ease;
+    }
+
+    .proto-btn:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .proto-btn:hover {
+      background: var(--bg-subtle);
+    }
+
+    .proto-btn[aria-pressed="true"] {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: var(--btn-primary-text);
+    }
+
+    .proto-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* Form Controls */
+    .form-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .field-label-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .field-hint {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-control);
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font: inherit;
+      font-size: 0.92rem;
+      transition: border-color 180ms ease, background-color 180ms ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      background: var(--bg-surface);
+      border-color: var(--accent-primary);
+    }
+
+    .input-with-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .input-with-actions input {
+      flex: 1 1 180px;
+      min-width: 0;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 44px;
+      min-width: 44px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-control);
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      font: inherit;
+      font-size: 0.83rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 180ms ease, border-color 180ms ease;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-canvas);
+      border-color: var(--accent-primary);
+    }
+
+    .btn-secondary:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-radius: 6px;
+      border: 1px solid var(--accent-primary);
+      background: var(--accent-primary);
+      color: var(--btn-primary-text);
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      transition: background-color 180ms ease, border-color 180ms ease;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-primary-hover);
+      border-color: var(--accent-primary-hover);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    /* Node state callouts & inline validation */
+    .state-notice {
+      padding: 12px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-subtle);
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .state-notice.is-error {
+      background: var(--accent-crimson-tint);
+      border-color: var(--accent-crimson);
+      color: var(--text-primary);
+    }
+
+    .state-notice-title {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .state-notice.is-error .state-notice-title {
+      color: var(--accent-crimson);
+    }
+
+    .notice-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .field-error {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent-crimson);
+    }
+
+    .premium-box {
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-subtle);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .trial-summary-strip {
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-subtle);
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Right Column: Live Credential & Telemetry Output Sheet */
+    .output-state-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .empty-sheet {
+      padding: 20px 16px;
+      border-radius: 8px;
+      border: 1px dashed var(--border-control);
+      background: var(--bg-canvas);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .empty-sheet p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .loading-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-subtle);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .loading-bar-fill {
+      width: 45%;
+      height: 100%;
+      background: var(--accent-primary);
+      border-radius: 3px;
+      animation: clinicalSlide 1.1s ease-in-out infinite alternate;
+    }
+
+    @keyframes clinicalSlide {
+      from {
+        transform: translateX(0%);
+      }
+      to {
+        transform: translateX(120%);
+      }
+    }
+
+    .preview-banner {
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: var(--accent-primary-tint);
+      border: 1px solid var(--accent-primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .result-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .result-toolbar .btn-secondary {
+      flex: 1 1 140px;
+    }
+
+    .result-section {
+      border-top: 1px solid var(--border-hairline);
+      padding-top: 14px;
+    }
+
+    .result-section h3 {
+      margin: 0 0 10px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-secondary);
+    }
+
+    .kv-list {
+      margin: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .kv-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-hairline);
+      min-width: 0;
+    }
+
+    .kv-row dt {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .kv-row dd {
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .link-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .link-card {
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .link-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .link-card-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .link-code-box {
+      margin: 0;
+      padding: 8px 10px;
+      border-radius: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: var(--text-primary);
+      overflow-wrap: anywhere;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    /* Section 2: Port Architecture & Bug Host Payload Generator */
+    .architecture-section {
+      padding: 48px 0;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .section-heading-wrap {
+      margin-bottom: 24px;
+      max-width: 760px;
+    }
+
+    .section-heading-wrap h2 {
+      margin: 0 0 8px;
+      font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+      letter-spacing: -0.015em;
+    }
+
+    .section-heading-wrap p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.94rem;
+    }
+
+    .split-two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-hairline);
+      vertical-align: top;
+    }
+
+    .spec-table th {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-secondary);
+      background: var(--bg-canvas);
+    }
+
+    .spec-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .payload-readout {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.45;
+      font-size: 0.82rem;
+    }
+
+    /* Section 3: Client Compatibility & Operator Setup */
+    .guide-section {
+      padding: 48px 0 56px;
+    }
+
+    .accordion-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    details.clinical-details {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    details.clinical-details summary {
+      min-height: 48px;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      list-style: none;
+    }
+
+    details.clinical-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.clinical-details summary::after {
+      content: "+";
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1.1rem;
+      color: var(--accent-primary);
+      flex-shrink: 0;
+    }
+
+    details.clinical-details[open] summary::after {
+      content: "-";
+    }
+
+    details.clinical-details[open] summary {
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-subtle);
+    }
+
+    .details-content {
+      padding: 14px 16px;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .details-content p {
+      margin: 0 0 10px;
+    }
+
+    .details-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .details-content ul {
+      margin: 0;
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .env-pre {
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 6px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-hairline);
+      font-size: 0.78rem;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+      word-break: break-all;
+      white-space: pre-wrap;
+      color: var(--text-primary);
+    }
+
+    /* Footer */
+    .site-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-hairline);
+      padding: 24px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .footer-summary {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      max-width: 560px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-hairline);
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 6px 10px;
+      color: var(--text-primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 600;
+    }
+
+    .konoha-credit {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Tablet Reflow (768px+) */
+    @media (min-width: 768px) {
+      .shell-container {
+        padding: 0 24px;
+      }
+
+      .header-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .primary-nav {
+        display: flex;
+        width: auto;
+        gap: 8px;
+      }
+
+      .nav-link {
+        padding: 8px 14px;
+      }
+
+      .tier-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .protocol-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .proto-btn:last-child {
+        grid-column: auto;
+      }
+
+      .premium-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .kv-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    /* Desktop Instrument Console Reflow (1080px+) */
+    @media (min-width: 1080px) {
+      .workbench-section {
+        padding: 40px 0 56px;
+      }
+
+      .workbench-grid {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 28px;
+      }
+
+      .control-deck {
+        grid-column: span 7;
+      }
+
+      .output-sheet {
+        grid-column: span 5;
+        position: sticky;
+        top: 84px;
+      }
+
+      .split-two-col {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 28px;
+      }
+
+      .split-col-left {
+        grid-column: span 6;
+      }
+
+      .split-col-right {
+        grid-column: span 6;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#workbench">Langsung ke Konsol Penyediaan</a>
+
+  <header class="site-header">
+    <div class="shell-container header-inner">
+      <div class="header-top-row">
+        <div class="brand-group">
+          <a class="brand-link" href="#workbench">
+            <img class="brand-mark" src="/barmods-rx-mark.svg" alt="" width="36" height="36" fetchpriority="high">
+            <span class="brand-text-wrap">
+              <span class="brand-wordmark">DOCTOR BARMODS</span>
+              <span class="brand-sub">Clinical Clean Ops</span>
+            </span>
+          </a>
+          <div id="header-node-badge" class="node-status-chip" data-state="loading" aria-live="polite">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="header-node-text">Memeriksa Node...</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" id="theme-toggle" class="theme-btn" aria-pressed="false" aria-label="Beralih tema gelap atau terang">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+            </svg>
+            <span id="theme-toggle-label">Mode Gelap</span>
+          </button>
+        </div>
+      </div>
+
+      <nav class="primary-nav" aria-label="Navigasi utama">
+        <a class="nav-link" href="#workbench">Konsol Akun</a>
+        <a class="nav-link" href="#arsitektur-port">Port &amp; Payload</a>
+        <a class="nav-link" href="#panduan-klien">Panduan &amp; Env</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section id="workbench" class="workbench-section" aria-labelledby="workbench-heading">
+      <div class="shell-container">
+        <div class="workbench-intro">
+          <h1 id="workbench-heading">Penyediaan Kredensial Tunnel Multi-Protokol</h1>
+          <p class="lead-copy">
+            Terbitkan akun uji coba publik atau akun premium kustom untuk protokol SSH, VMess, VLESS, Trojan, dan Shadowsocks langsung dari node port-5888 yang terdaftar.
+          </p>
+        </div>
+
+        <div class="workbench-grid">
+          <div class="instrument-panel control-deck">
+            <div class="panel-header">
+              <h2 class="panel-title">Dek Kontrol Penyediaan</h2>
+              <span id="active-action-code" class="panel-code-tag mono">ACTION: trialssh</span>
+            </div>
+
+            <div class="panel-body">
+              <div class="control-block" role="group" aria-labelledby="tier-group-label">
+                <span id="tier-group-label" class="block-label">1. Pilih Mode Akses Layanan</span>
+                <div class="tier-grid">
+                  <button type="button" id="tier-trial-btn" class="tier-card-btn" data-tier="trial" aria-pressed="true">
+                    <span class="tier-card-title">Trial Publik</span>
+                    <span class="tier-card-meta">Tanpa PIN. Batas tetap: 1 Hari, maks 2 IP, kuota 5 GB.</span>
+                  </button>
+                  <button type="button" id="tier-premium-btn" class="tier-card-btn" data-tier="premium" aria-pressed="false">
+                    <span class="tier-card-title">Create Premium</span>
+                    <span class="tier-card-meta">Wajib PIN Admin. Durasi 1-365 hari, kuota dan IP kustom.</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="control-block" role="group" aria-labelledby="proto-group-label">
+                <span id="proto-group-label" class="block-label">2. Pilih Protokol Tunnel</span>
+                <div class="protocol-grid">
+                  <button type="button" class="proto-btn" data-protocol="ssh" aria-pressed="true">
+                    <svg class="proto-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                      <rect x="2.5" y="3.5" width="15" height="13" rx="2"></rect>
+                      <path d="M6 8l2.5 2L6 12M10.5 12H14"></path>
+                    </svg>
+                    <span>SSH</span>
+                  </button>
+                  <button type="button" class="proto-btn" data-protocol="vmess" aria-pressed="false">
+                    <svg class="proto-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                      <polygon points="10,2.5 17,6.5 17,13.5 10,17.5 3,13.5 3,6.5"></polygon>
+                      <circle cx="10" cy="10" r="2.2"></circle>
+                    </svg>
+                    <span>VMess</span>
+                  </button>
+                  <button type="button" class="proto-btn" data-protocol="vless" aria-pressed="false">
+                    <svg class="proto-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                      <path d="M3 5l7 10 7-10"></path>
+                      <path d="M6.5 5L10 10l3.5-5"></path>
+                    </svg>
+                    <span>VLESS</span>
+                  </button>
+                  <button type="button" class="proto-btn" data-protocol="trojan" aria-pressed="false">
+                    <svg class="proto-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                      <path d="M10 2.5l6.5 2.8v4.7c0 4.1-2.8 6.8-6.5 7.8-3.7-1-6.5-3.7-6.5-7.8V5.3L10 2.5z"></path>
+                      <path d="M10 7v6"></path>
+                    </svg>
+                    <span>Trojan</span>
+                  </button>
+                  <button type="button" class="proto-btn" data-protocol="shadowsocks" aria-pressed="false">
+                    <svg class="proto-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                      <path d="M4 14L16 6"></path>
+                      <path d="M4 9.5L11.5 4.5"></path>
+                      <path d="M8.5 15.5L16 10.5"></path>
+                    </svg>
+                    <span>Shadowsocks</span>
+                  </button>
+                </div>
+              </div>
+
+              <form id="vpn-form" class="form-grid" novalidate>
+                <div class="field-group">
+                  <div class="field-label-row">
+                    <label for="server-select">Node Server Tujuan</label>
+                    <span class="field-hint">Diambil dari GET /api/vpn</span>
+                  </div>
+                  <div class="input-with-actions">
+                    <select id="server-select" name="serverId" required>
+                      <option value="">Memuat daftar node server...</option>
+                    </select>
+                    <button type="button" id="reload-servers-btn" class="btn-secondary">Muat Ulang Node</button>
+                  </div>
+
+                  <div id="server-state-box" class="state-notice" aria-live="polite">
+                    <span id="server-state-title" class="state-notice-title">Menghubungi endpoint node...</span>
+                    <span id="server-state-desc">Memeriksa konfigurasi variabel VPN_SERVERS_JSON pada server.</span>
+                    <div id="server-state-actions" class="notice-actions hidden">
+                      <a href="#panduan-klien" class="btn-secondary">Lihat Contoh Env</a>
+                      <button type="button" id="retry-servers-btn" class="btn-secondary">Coba Lagi</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field-group">
+                  <div class="field-label-row">
+                    <label for="username-input">Username Akun</label>
+                    <span class="field-hint">Huruf dan angka saja (a-z, A-Z, 0-9)</span>
+                  </div>
+                  <input
+                    type="text"
+                    id="username-input"
+                    name="user"
+                    class="mono"
+                    maxlength="32"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Contoh: operator01"
+                    aria-describedby="username-error"
+                    required
+                  >
+                  <p id="username-error" class="field-error hidden" role="alert"></p>
+                </div>
+
+                <div id="ssh-password-group" class="field-group">
+                  <div class="field-label-row">
+                    <label for="password-input">Password SSH</label>
+                    <span class="field-hint">Khusus protokol SSH / Dropbear / WS</span>
+                  </div>
+                  <div class="input-with-actions">
+                    <input
+                      type="password"
+                      id="password-input"
+                      name="password"
+                      class="mono"
+                      maxlength="64"
+                      autocomplete="new-password"
+                      placeholder="Masukkan password atau klik Acak"
+                    >
+                    <button type="button" id="toggle-ssh-pass-btn" class="btn-secondary" aria-pressed="false">Tampilkan</button>
+                    <button type="button" id="random-ssh-pass-btn" class="btn-secondary">Acak Password</button>
+                  </div>
+                </div>
+
+                <div id="trial-limits-note" class="trial-summary-strip">
+                  Parameter Trial Publik dikunci otomatis oleh server: <strong>Masa aktif 1 Hari</strong>, <strong>Batas 2 IP</strong>, dan <strong>Kuota 5 GB</strong> (untuk VMess, VLESS, Trojan, Shadowsocks).
+                </div>
+
+                <div id="premium-fields-group" class="premium-box hidden">
+                  <div class="field-group">
+                    <div class="field-label-row">
+                      <label for="exp-input">Masa Aktif (Hari)</label>
+                      <span class="field-hint">1 sampai 365</span>
+                    </div>
+                    <input type="number" id="exp-input" name="exp" class="mono" min="1" max="365" value="30">
+                  </div>
+
+                  <div id="quota-field-wrap" class="field-group hidden">
+                    <div class="field-label-row">
+                      <label for="quota-input">Kuota Data (GB)</label>
+                      <span class="field-hint">0 = Unlimited</span>
+                    </div>
+                    <input type="number" id="quota-input" name="quota" class="mono" min="0" max="100000" value="0">
+                  </div>
+
+                  <div class="field-group">
+                    <div class="field-label-row">
+                      <label for="iplimit-input">Batas Login (IP)</label>
+                      <span class="field-hint">1 sampai 100</span>
+                    </div>
+                    <input type="number" id="iplimit-input" name="iplimit" class="mono" min="1" max="100" value="2">
+                  </div>
+
+                  <div class="field-group">
+                    <div class="field-label-row">
+                      <label for="admin-pin-input">PIN Admin</label>
+                      <span class="field-hint">Diverifikasi timing-safe</span>
+                    </div>
+                    <div class="input-with-actions">
+                      <input
+                        type="password"
+                        id="admin-pin-input"
+                        name="adminPin"
+                        class="mono"
+                        autocomplete="current-password"
+                        placeholder="Masukkan PIN Admin"
+                      >
+                      <button type="button" id="toggle-pin-btn" class="btn-secondary" aria-pressed="false">Tampilkan</button>
+                    </div>
+                  </div>
+                </div>
+
+                <p id="form-error-banner" class="field-error hidden" role="alert"></p>
+
+                <button type="submit" id="submit-btn" class="btn-primary">
+                  Buat Akun Trial SSH
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="instrument-panel output-sheet" aria-labelledby="output-heading">
+            <div class="panel-header">
+              <h2 id="output-heading" class="panel-title">Lembar Kredensial &amp; Telemetri</h2>
+              <span id="output-status-tag" class="panel-code-tag mono">SIAGA</span>
+            </div>
+
+            <div id="output-live-region" class="panel-body output-state-wrap" aria-live="polite">
+              <div id="output-empty-view" class="empty-sheet">
+                <p>
+                  Belum ada akun yang diterbitkan pada sesi ini. Pilih node server, tentukan protokol, lalu kirim formulir di samping untuk menerima detail kredensial, port, serta tautan impor klien.
+                </p>
+                <div class="notice-actions">
+                  <button type="button" id="toggle-preview-btn" class="btn-secondary" aria-pressed="false">
+                    Lihat Contoh Format Output
+                  </button>
+                </div>
+              </div>
+
+              <div id="output-loading-view" class="state-notice hidden">
+                <span class="state-notice-title">Menerbitkan kredensial pada daemon node...</span>
+                <span>Menghubungi API port-5888 dengan batas waktu 15 detik. Mohon tunggu sebentar.</span>
+                <div class="loading-bar-track" aria-hidden="true">
+                  <div class="loading-bar-fill"></div>
+                </div>
+              </div>
+
+              <div id="output-error-view" class="state-notice is-error hidden" role="alert">
+                <span class="state-notice-title">Permintaan Penyediaan Gagal</span>
+                <span id="output-error-message">Terjadi kendala saat memproses permintaan.</span>
+              </div>
+
+              <div id="output-result-view" class="output-state-wrap hidden"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="arsitektur-port" class="architecture-section" aria-labelledby="arch-heading">
+      <div class="shell-container">
+        <div class="section-heading-wrap">
+          <h2 id="arch-heading">Arsitektur Port &amp; Generator Payload Bug Host</h2>
+          <p>
+            Referensi teknis jalur transport node port-5888 beserta perakit payload HTTP/WebSocket untuk operator yang menyesuaikan SNI atau bug host operator seluler.
+          </p>
+        </div>
+
+        <div class="split-two-col">
+          <div class="instrument-panel split-col-left">
+            <div class="panel-header">
+              <h3 class="panel-title">Matriks Port &amp; Endpoint Xray / SSH</h3>
+              <span class="panel-code-tag mono">STANDAR NODE</span>
+            </div>
+            <div class="panel-body">
+              <div class="table-scroll">
+                <table class="spec-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Layanan</th>
+                      <th scope="col">Port Default</th>
+                      <th scope="col">Path / ServiceName</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>OpenSSH &amp; Dropbear</strong></td>
+                      <td class="mono">22, 109, 143, 500</td>
+                      <td class="mono">-</td>
+                    </tr>
+                    <tr>
+                      <td><strong>SSH WebSocket TLS / HTTP</strong></td>
+                      <td class="mono">443 / 80, 8080, 8880</td>
+                      <td class="mono">/ (Upgrade: websocket)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>VMess WS &amp; gRPC</strong></td>
+                      <td class="mono">443 (TLS), 80 (HTTP)</td>
+                      <td class="mono">/vmess | vmess-grpc</td>
+                    </tr>
+                    <tr>
+                      <td><strong>VLESS WS &amp; gRPC</strong></td>
+                      <td class="mono">443 (TLS), 80 (HTTP)</td>
+                      <td class="mono">/vless | vless-grpc</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Trojan WS &amp; gRPC</strong></td>
+                      <td class="mono">443 (TLS)</td>
+                      <td class="mono">/trojan-ws | trojan-grpc</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Shadowsocks WS &amp; gRPC</strong></td>
+                      <td class="mono">443 (TLS), 80 (HTTP)</td>
+                      <td class="mono">/ss-ws | ss-grpc</td>
+                    </tr>
+                    <tr>
+                      <td><strong>UDP Custom &amp; SlowDNS</strong></td>
+                      <td class="mono">1-65535 / UDP 53, 5300</td>
+                      <td class="mono">NS Domain + Public Key</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Arsip Konfigurasi (.txt)</strong></td>
+                      <td class="mono">81 (HTTP)</td>
+                      <td class="mono">/&lt;protokol&gt;-&lt;user&gt;.txt</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="instrument-panel split-col-right">
+            <div class="panel-header">
+              <h3 class="panel-title">Generator Payload WebSocket Bug Host</h3>
+              <span class="panel-code-tag mono">[crlf] BUILDER</span>
+            </div>
+            <div class="panel-body form-grid">
+              <div class="field-group">
+                <label for="payload-server-domain">Domain Host Server VPN</label>
+                <input
+                  type="text"
+                  id="payload-server-domain"
+                  class="mono"
+                  value="sg1.example.com"
+                  placeholder="Contoh: sg1.example.com"
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="payload-bug-host">Bug Host / Domain CDN</label>
+                <input
+                  type="text"
+                  id="payload-bug-host"
+                  class="mono"
+                  value="bug.example.com"
+                  placeholder="Contoh: bug.example.com"
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="payload-mode-select">Pola Handshake Payload</label>
+                <select id="payload-mode-select">
+                  <option value="dualray">Dual-Ray CDN-CGI Trace (GET /cdn-cgi/trace + GET-RAY)</option>
+                  <option value="standard">Standard WebSocket Upgrade (Header X-Forwarded-Host)</option>
+                  <option value="replace">HTTP Custom Split Host (PATCH Upgrade)</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="payload-path-select">Jalur Endpoint Protokol</label>
+                <select id="payload-path-select" class="mono">
+                  <option value="/">/ (SSH WebSocket)</option>
+                  <option value="/vmess">/vmess (VMess WS)</option>
+                  <option value="/vless">/vless (VLESS WS)</option>
+                  <option value="/trojan-ws">/trojan-ws (Trojan WS)</option>
+                  <option value="/ss-ws">/ss-ws (Shadowsocks WS)</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="custom-payload-output">Hasil Rakitan Payload</label>
+                <textarea id="custom-payload-output" class="mono payload-readout" readonly></textarea>
+              </div>
+
+              <div class="result-toolbar">
+                <button type="button" id="copy-custom-payload-btn" class="btn-secondary">Salin Payload</button>
+                <button type="button" id="reset-payload-btn" class="btn-secondary">Reset Contoh</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panduan-klien" class="guide-section" aria-labelledby="guide-heading">
+      <div class="shell-container">
+        <div class="section-heading-wrap">
+          <h2 id="guide-heading">Panduan Klien &amp; Konfigurasi Operator</h2>
+          <p>
+            Petunjuk impor kredensial pada perangkat pengguna serta format variabel environment untuk deployment 1-klik di Vercel.
+          </p>
+        </div>
+
+        <div class="split-two-col">
+          <div class="split-col-left">
+            <h3 class="block-label">Panduan Penggunaan Aplikasi Klien</h3>
+            <div class="accordion-stack">
+              <details class="clinical-details" open>
+                <summary>Aplikasi Klien yang Kompatibel (Android, iOS, Desktop, OpenWrt)</summary>
+                <div class="details-content">
+                  <ul>
+                    <li><strong>Android:</strong> HTTP Custom (untuk format SSH + Payload WS / UDP), v2rayNG, NekoBox, dan Sing-box.</li>
+                    <li><strong>iOS &amp; macOS:</strong> Shadowrocket, Streisand, FoXray, atau Sing-box melalui tautan URI <code class="mono">vmess://</code>, <code class="mono">vless://</code>, dan <code class="mono">trojan://</code>.</li>
+                    <li><strong>Windows &amp; Linux:</strong> v2rayN, Nekoray / Throne, atau klien OpenSSH terminal.</li>
+                    <li><strong>Router OpenWrt:</strong> PassWall2, OpenClash, dan Nikki dengan menyalin parameter UUID, domain, port 443/80, serta path WebSocket/gRPC.</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="clinical-details">
+                <summary>Cara Mengimpor Tautan TLS, HTTP WS, dan gRPC</summary>
+                <div class="details-content">
+                  <p>
+                    Gunakan <strong>URL TLS (Port 443)</strong> untuk jaringan standar dengan enkripsi penuh SNI, atau pilih <strong>URL HTTP (Port 80)</strong> apabila skema injeksi bug host Anda mengandalkan jabat tangan HTTP non-TLS.
+                  </p>
+                  <p>
+                    Klik tombol <strong>Salin</strong> pada salah satu tautan di Lembar Kredensial, buka aplikasi v2rayNG atau NekoBox, lalu pilih menu <em>Import config from Clipboard</em>.
+                  </p>
+                </div>
+              </details>
+
+              <details class="clinical-details">
+                <summary>Kebijakan Batas IP dan Rate-Limit Trial Publik</summary>
+                <div class="details-content">
+                  <p>
+                    Setiap alamat IP pengunjung dibatasi maksimal 5 pembuatan akun Trial per 15 menit (dapat disesuaikan oleh operator melalui <code class="mono">TRIAL_RATE_LIMIT_MAX</code>) guna menjaga kestabilan node dari penyalahgunaan otomatis.
+                  </p>
+                  <p>
+                    Pastikan jumlah perangkat yang terhubung bersamaan tidak melewati nilai <strong>Batas Login (IP)</strong> agar sesi tidak diputus otomatis oleh daemon node.
+                  </p>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div class="instrument-panel split-col-right">
+            <div class="panel-header">
+              <h3 class="panel-title">Konfigurasi Environment Vercel</h3>
+              <span class="panel-code-tag mono">SERVERLESS ENV</span>
+            </div>
+            <div class="panel-body">
+              <p class="field-hint" style="margin-top: 0;">
+                Tambahkan variabel berikut pada menu <strong>Project Settings &gt; Environment Variables</strong> di Vercel. Token <code class="mono">auth</code> disimpan aman di sisi server dan tidak pernah dikirim ke browser pengunjung.
+              </p>
+              <pre id="env-json-snippet" class="env-pre mono">VPN_SERVERS_JSON=[{"id":"sg-01","name":"Singapore Node 01","region":"Singapore","isp":"Example Cloud","domain":"sg1.example.com","port":5888,"auth":"GANTI_TOKEN_AUTH_NODE"}]
+ADMIN_PIN=GANTI_PIN_OPERATOR
+TRIAL_RATE_LIMIT_MAX=5</pre>
+              <div class="notice-actions">
+                <button type="button" id="copy-env-json-btn" class="btn-secondary">Salin Contoh Env</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell-container footer-inner">
+      <p class="footer-summary">
+        Doctor Barmods Clinical Clean Ops Console menyediakan antarmuka pembuatan kredensial tunnel langsung ke node port-5888 milik operator tanpa menyimpan riwayat password atau token otorisasi di sisi klien.
+      </p>
+      <div class="footer-bottom">
+        <div class="footer-links">
+          <a class="footer-link" href="#workbench">Konsol Penyediaan</a>
+          <a class="footer-link" href="#arsitektur-port">Spesifikasi Port</a>
+          <a class="footer-link" href="#panduan-klien">Panduan &amp; Env</a>
+        </div>
+        <span class="konoha-credit">Build by konoha</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_THEME_KEY = 'barmods_clinical_theme';
+      const USERNAME_REGEX = /^[a-zA-Z0-9]+$/;
+
+      const PROTOCOL_LABELS = {
+        ssh: 'SSH',
+        vmess: 'VMess',
+        vless: 'VLESS',
+        trojan: 'Trojan',
+        shadowsocks: 'Shadowsocks'
+      };
+
+      const state = {
+        theme: 'light',
+        tier: 'trial',
+        protocol: 'ssh',
+        servers: [],
+        serversConfigured: false,
+        previewActive: false,
+        lastResult: null,
+        copyTimers: new Map()
+      };
+
+      const els = {
+        themeToggle: document.getElementById('theme-toggle'),
+        themeToggleLabel: document.getElementById('theme-toggle-label'),
+        headerNodeBadge: document.getElementById('header-node-badge'),
+        headerNodeText: document.getElementById('header-node-text'),
+        activeActionCode: document.getElementById('active-action-code'),
+        tierTrialBtn: document.getElementById('tier-trial-btn'),
+        tierPremiumBtn: document.getElementById('tier-premium-btn'),
+        protoBtns: Array.from(document.querySelectorAll('.proto-btn')),
+        vpnForm: document.getElementById('vpn-form'),
+        serverSelect: document.getElementById('server-select'),
+        reloadServersBtn: document.getElementById('reload-servers-btn'),
+        retryServersBtn: document.getElementById('retry-servers-btn'),
+        serverStateBox: document.getElementById('server-state-box'),
+        serverStateTitle: document.getElementById('server-state-title'),
+        serverStateDesc: document.getElementById('server-state-desc'),
+        serverStateActions: document.getElementById('server-state-actions'),
+        usernameInput: document.getElementById('username-input'),
+        usernameError: document.getElementById('username-error'),
+        sshPasswordGroup: document.getElementById('ssh-password-group'),
+        passwordInput: document.getElementById('password-input'),
+        toggleSshPassBtn: document.getElementById('toggle-ssh-pass-btn'),
+        randomSshPassBtn: document.getElementById('random-ssh-pass-btn'),
+        trialLimitsNote: document.getElementById('trial-limits-note'),
+        premiumFieldsGroup: document.getElementById('premium-fields-group'),
+        quotaFieldWrap: document.getElementById('quota-field-wrap'),
+        expInput: document.getElementById('exp-input'),
+        quotaInput: document.getElementById('quota-input'),
+        ipLimitInput: document.getElementById('iplimit-input'),
+        adminPinInput: document.getElementById('admin-pin-input'),
+        togglePinBtn: document.getElementById('toggle-pin-btn'),
+        formErrorBanner: document.getElementById('form-error-banner'),
+        submitBtn: document.getElementById('submit-btn'),
+        outputStatusTag: document.getElementById('output-status-tag'),
+        outputEmptyView: document.getElementById('output-empty-view'),
+        outputLoadingView: document.getElementById('output-loading-view'),
+        outputErrorView: document.getElementById('output-error-view'),
+        outputErrorMessage: document.getElementById('output-error-message'),
+        outputResultView: document.getElementById('output-result-view'),
+        togglePreviewBtn: document.getElementById('toggle-preview-btn'),
+        payloadServerDomain: document.getElementById('payload-server-domain'),
+        payloadBugHost: document.getElementById('payload-bug-host'),
+        payloadModeSelect: document.getElementById('payload-mode-select'),
+        payloadPathSelect: document.getElementById('payload-path-select'),
+        customPayloadOutput: document.getElementById('custom-payload-output'),
+        copyCustomPayloadBtn: document.getElementById('copy-custom-payload-btn'),
+        resetPayloadBtn: document.getElementById('reset-payload-btn'),
+        envJsonSnippet: document.getElementById('env-json-snippet'),
+        copyEnvJsonBtn: document.getElementById('copy-env-json-btn')
+      };
+
+      function getCurrentActionName() {
+        const prefix = state.tier === 'premium' ? 'create' : 'trial';
+        return prefix + state.protocol;
+      }
+
+      function applyTheme(theme) {
+        const resolved = theme === 'dark' ? 'dark' : 'light';
+        state.theme = resolved;
+        document.documentElement.setAttribute('data-theme', resolved);
+        const isDark = resolved === 'dark';
+        els.themeToggle.setAttribute('aria-pressed', String(isDark));
+        els.themeToggleLabel.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
+      }
+
+      function initTheme() {
+        let saved = 'light';
+        try {
+          const stored = window.localStorage.getItem(STORAGE_THEME_KEY);
+          if (stored === 'dark' || stored === 'light') {
+            saved = stored;
+          }
+        } catch {
+          saved = 'light';
+        }
+        applyTheme(saved);
+      }
+
+      function toggleTheme() {
+        const next = state.theme === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try {
+          window.localStorage.setItem(STORAGE_THEME_KEY, next);
+        } catch {
+          // Ignore storage quota or private mode restrictions.
+        }
+      }
+
+      function syncControlVisibility() {
+        const isPremium = state.tier === 'premium';
+        const isSsh = state.protocol === 'ssh';
+        const protoLabel = PROTOCOL_LABELS[state.protocol] || 'SSH';
+
+        els.tierTrialBtn.setAttribute('aria-pressed', String(!isPremium));
+        els.tierPremiumBtn.setAttribute('aria-pressed', String(isPremium));
+
+        for (const btn of els.protoBtns) {
+          const active = btn.getAttribute('data-protocol') === state.protocol;
+          btn.setAttribute('aria-pressed', String(active));
+        }
+
+        els.sshPasswordGroup.classList.toggle('hidden', !isSsh);
+        els.trialLimitsNote.classList.toggle('hidden', isPremium);
+        els.premiumFieldsGroup.classList.toggle('hidden', !isPremium);
+        els.quotaFieldWrap.classList.toggle('hidden', !isPremium || isSsh);
+
+        els.activeActionCode.textContent = 'ACTION: ' + getCurrentActionName();
+        els.submitBtn.textContent = isPremium
+          ? 'Terbitkan Akun Premium ' + protoLabel
+          : 'Buat Akun Trial ' + protoLabel;
+
+        if (state.previewActive && !state.lastResult) {
+          renderCredentialResult(buildSamplePreviewData(state.protocol), true);
+        }
+      }
+
+      function generateRandomPassword(length) {
+        const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+        const bytes = new Uint32Array(length);
+        window.crypto.getRandomValues(bytes);
+        let out = '';
+        for (let i = 0; i < length; i += 1) {
+          out += alphabet[bytes[i] % alphabet.length];
+        }
+        return out;
+      }
+
+      async function copyTextWithFeedback(buttonEl, textValue, defaultLabel) {
+        if (!textValue) return;
+        let copied = false;
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          try {
+            await navigator.clipboard.writeText(textValue);
+            copied = true;
+          } catch {
+            copied = false;
+          }
+        }
+        if (!copied) {
+          const area = document.createElement('textarea');
+          area.value = textValue;
+          area.setAttribute('readonly', '');
+          area.style.position = 'fixed';
+          area.style.opacity = '0';
+          document.body.appendChild(area);
+          area.select();
+          try {
+            copied = document.execCommand('copy');
+          } catch {
+            copied = false;
+          }
+          document.body.removeChild(area);
+        }
+
+        const priorTimer = state.copyTimers.get(buttonEl);
+        if (priorTimer) window.clearTimeout(priorTimer);
+
+        buttonEl.textContent = copied ? 'Tersalin' : 'Gagal Salin';
+        const timerId = window.setTimeout(() => {
+          buttonEl.textContent = defaultLabel;
+          state.copyTimers.delete(buttonEl);
+        }, 1800);
+        state.copyTimers.set(buttonEl, timerId);
+      }
+
+      function downloadTextFile(filename, textContent) {
+        const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+        const objectUrl = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = objectUrl;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      }
+
+      function setServerUiState(mode, title, description) {
+        els.serverStateBox.classList.toggle('is-error', mode === 'error');
+        els.serverStateBox.classList.toggle('hidden', mode === 'ready');
+        els.serverStateTitle.textContent = title;
+        els.serverStateDesc.textContent = description;
+        els.serverStateActions.classList.toggle('hidden', mode === 'loading' || mode === 'ready');
+        els.headerNodeBadge.setAttribute('data-state', mode);
+      }
+
+      async function loadServers() {
+        els.serverSelect.disabled = true;
+        els.reloadServersBtn.disabled = true;
+        els.headerNodeText.textContent = 'Memuat Node...';
+        setServerUiState(
+          'loading',
+          'Memuat daftar node server...',
+          'Menghubungi GET /api/vpn untuk memeriksa ketersediaan node.'
+        );
+
+        try {
+          const response = await window.fetch('/api/vpn', {
+            method: 'GET',
+            headers: { Accept: 'application/json' }
+          });
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Gagal memuat konfigurasi node server.');
+          }
+
+          const servers = Array.isArray(data.servers) ? data.servers : [];
+          state.servers = servers;
+          state.serversConfigured = Boolean(data.configured && servers.length > 0);
+
+          els.serverSelect.replaceChildren();
+
+          if (!state.serversConfigured) {
+            const emptyOpt = document.createElement('option');
+            emptyOpt.value = '';
+            emptyOpt.textContent = 'Belum ada node (atur VPN_SERVERS_JSON)';
+            els.serverSelect.appendChild(emptyOpt);
+            els.serverSelect.disabled = true;
+            els.headerNodeText.textContent = 'Env Belum Diatur';
+            setServerUiState(
+              'empty',
+              'Variabel VPN_SERVERS_JSON Belum Dikonfigurasi',
+              'Tambahkan daftar node port-5888 pada Environment Variables Vercel atau berkas .env lokal, lalu klik Muat Ulang Node.'
+            );
+            return;
+          }
+
+          for (const srv of servers) {
+            const opt = document.createElement('option');
+            opt.value = srv.id;
+            opt.textContent = srv.name + ' (' + srv.region + ' - ' + srv.isp + ')';
+            els.serverSelect.appendChild(opt);
+          }
+
+          els.serverSelect.disabled = false;
+          els.headerNodeText.textContent = servers.length + ' Node Siap';
+          setServerUiState('ready', '', '');
+        } catch (err) {
+          state.servers = [];
+          state.serversConfigured = false;
+          els.serverSelect.replaceChildren();
+          const errOpt = document.createElement('option');
+          errOpt.value = '';
+          errOpt.textContent = 'Gagal memuat daftar node';
+          els.serverSelect.appendChild(errOpt);
+          els.serverSelect.disabled = true;
+          els.headerNodeText.textContent = 'Gangguan API';
+          setServerUiState(
+            'error',
+            'Gagal Memuat Daftar Node Server',
+            err.message || 'Periksa koneksi jaringan atau konfigurasi fungsi serverless /api/vpn.'
+          );
+        } finally {
+          els.reloadServersBtn.disabled = false;
+        }
+      }
+
+      function createDefinitionRow(term, value, useMono) {
+        const row = document.createElement('div');
+        row.className = 'kv-row';
+        const dt = document.createElement('dt');
+        dt.textContent = term;
+        const dd = document.createElement('dd');
+        if (useMono) dd.className = 'mono';
+        dd.textContent = value || '-';
+        row.append(dt, dd);
+        return row;
+      }
+
+      function showOutputView(viewName) {
+        els.outputEmptyView.classList.toggle('hidden', viewName !== 'empty');
+        els.outputLoadingView.classList.toggle('hidden', viewName !== 'loading');
+        els.outputErrorView.classList.toggle('hidden', viewName !== 'error');
+        els.outputResultView.classList.toggle('hidden', viewName !== 'result');
+      }
+
+      function renderCredentialResult(payload, isSamplePreview) {
+        els.outputResultView.replaceChildren();
+        els.outputStatusTag.textContent = isSamplePreview
+          ? 'PRATINJAU'
+          : payload.protocol.toUpperCase() + ' AKTIF';
+
+        if (isSamplePreview) {
+          const banner = document.createElement('div');
+          banner.className = 'preview-banner';
+          banner.textContent = '[CONTOH PRATINJAU] Data di bawah adalah simulasi struktur output menggunakan domain contoh sg1.example.com.';
+          els.outputResultView.appendChild(banner);
+        }
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'result-toolbar';
+
+        const copyAllBtn = document.createElement('button');
+        copyAllBtn.type = 'button';
+        copyAllBtn.className = 'btn-secondary';
+        copyAllBtn.textContent = 'Salin Laporan Lengkap';
+        copyAllBtn.addEventListener('click', () => {
+          copyTextWithFeedback(copyAllBtn, payload.reportText, 'Salin Laporan Lengkap');
+        });
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.type = 'button';
+        downloadBtn.className = 'btn-secondary';
+        downloadBtn.textContent = 'Unduh File .txt';
+        downloadBtn.addEventListener('click', () => {
+          const fileSlug = (payload.protocol || 'vpn') + '-' + (payload.account?.username || 'akun') + '.txt';
+          downloadTextFile(fileSlug, payload.reportText || '');
+        });
+
+        toolbar.append(copyAllBtn, downloadBtn);
+
+        if (isSamplePreview) {
+          const closePreviewBtn = document.createElement('button');
+          closePreviewBtn.type = 'button';
+          closePreviewBtn.className = 'btn-secondary';
+          closePreviewBtn.textContent = 'Tutup Contoh Format';
+          closePreviewBtn.addEventListener('click', () => {
+            state.previewActive = false;
+            els.togglePreviewBtn.setAttribute('aria-pressed', 'false');
+            els.outputStatusTag.textContent = 'SIAGA';
+            showOutputView('empty');
+          });
+          toolbar.appendChild(closePreviewBtn);
+        }
+
+        els.outputResultView.appendChild(toolbar);
+
+        // Account section
+        const accountSec = document.createElement('div');
+        accountSec.className = 'result-section';
+        const accountHeading = document.createElement('h3');
+        accountHeading.textContent = 'Informasi Akun';
+        const accountList = document.createElement('dl');
+        accountList.className = 'kv-list';
+        accountList.appendChild(createDefinitionRow('Username', payload.account?.username, true));
+        if (payload.account?.password) {
+          accountList.appendChild(createDefinitionRow('Password', payload.account.password, true));
+        }
+        if (payload.account?.uuid) {
+          accountList.appendChild(createDefinitionRow('UUID / Key', payload.account.uuid, true));
+        }
+        if (payload.account?.cipher) {
+          accountList.appendChild(createDefinitionRow('Cipher / Mode', payload.account.cipher, true));
+        }
+        accountList.appendChild(createDefinitionRow('Masa Aktif', payload.account?.expired, false));
+        accountList.appendChild(createDefinitionRow('Kuota Data', payload.account?.quota, false));
+        accountList.appendChild(createDefinitionRow('Batas Login', payload.account?.iplimit, false));
+        accountSec.append(accountHeading, accountList);
+        els.outputResultView.appendChild(accountSec);
+
+        // Server & DNS section
+        const serverSec = document.createElement('div');
+        serverSec.className = 'result-section';
+        const serverHeading = document.createElement('h3');
+        serverHeading.textContent = 'Informasi Node & SlowDNS';
+        const serverList = document.createElement('dl');
+        serverList.className = 'kv-list';
+        serverList.appendChild(createDefinitionRow('Node Server', payload.server?.name + ' (' + payload.server?.region + ')', false));
+        serverList.appendChild(createDefinitionRow('ISP', payload.server?.isp, false));
+        serverList.appendChild(createDefinitionRow('Domain', payload.server?.domain, true));
+        serverList.appendChild(createDefinitionRow('IP Publik', payload.server?.ip, true));
+        serverList.appendChild(createDefinitionRow('CloudFront', payload.server?.cloudfront, true));
+        serverList.appendChild(createDefinitionRow('NS SlowDNS', payload.server?.ns_domain, true));
+        serverList.appendChild(createDefinitionRow('Public Key', payload.server?.pubkey, true));
+        serverSec.append(serverHeading, serverList);
+        els.outputResultView.appendChild(serverSec);
+
+        // Active Ports section
+        if (payload.ports && typeof payload.ports === 'object') {
+          const portSec = document.createElement('div');
+          portSec.className = 'result-section';
+          const portHeading = document.createElement('h3');
+          portHeading.textContent = 'Spesifikasi Port Aktif';
+          const portList = document.createElement('dl');
+          portList.className = 'kv-list';
+          for (const [key, val] of Object.entries(payload.ports)) {
+            portList.appendChild(createDefinitionRow(key.toUpperCase(), String(val), true));
+          }
+          portSec.append(portHeading, portList);
+          els.outputResultView.appendChild(portSec);
+        }
+
+        // Individual Links & Payloads section
+        const linksSec = document.createElement('div');
+        linksSec.className = 'result-section';
+        const linksHeading = document.createElement('h3');
+        linksHeading.textContent = 'Tautan & Payload Konfigurasi';
+        const linkCards = document.createElement('div');
+        linkCards.className = 'link-cards';
+
+        const linkItems = Array.isArray(payload.links) ? payload.links : [];
+        for (const item of linkItems) {
+          const card = document.createElement('div');
+          card.className = 'link-card';
+
+          const top = document.createElement('div');
+          top.className = 'link-card-top';
+
+          const lbl = document.createElement('span');
+          lbl.className = 'link-card-label';
+          lbl.textContent = item.label;
+
+          const copyBtn = document.createElement('button');
+          copyBtn.type = 'button';
+          copyBtn.className = 'btn-secondary';
+          copyBtn.textContent = 'Salin';
+          copyBtn.setAttribute('aria-label', 'Salin ' + item.label);
+          copyBtn.addEventListener('click', () => {
+            copyTextWithFeedback(copyBtn, item.value, 'Salin');
+          });
+
+          top.append(lbl, copyBtn);
+
+          const pre = document.createElement('pre');
+          pre.className = 'link-code-box mono';
+          pre.textContent = item.value;
+
+          card.append(top, pre);
+          linkCards.appendChild(card);
+        }
+
+        linksSec.append(linksHeading, linkCards);
+        els.outputResultView.appendChild(linksSec);
+
+        showOutputView('result');
+      }
+
+      function buildSamplePreviewData(proto) {
+        const sampleUser = 'contoh01';
+        const sampleDomain = 'sg1.example.com';
+        const isSsh = proto === 'ssh';
+        const sampleUuid = '00000000-0000-4000-8000-000000000001';
+        const links = isSsh
+          ? [
+              { key: 'http_custom_tls', label: 'HTTP Custom (TLS 443)', value: sampleDomain + ':443@' + sampleUser + ':ContohPass12' },
+              { key: 'payload_ws', label: 'Payload WS Standar', value: 'GET / HTTP/1.1[crlf]Host: ' + sampleDomain + '[crlf]Upgrade: websocket[crlf][crlf]' },
+              { key: 'save_txt', label: 'Tautan Simpan .txt', value: 'http://' + sampleDomain + ':81/ssh-' + sampleUser + '.txt' }
+            ]
+          : [
+              { key: 'url_tls', label: 'URL TLS (Port 443)', value: proto + '://' + sampleUuid + '@' + sampleDomain + ':443?security=tls&type=ws#' + sampleUser },
+              { key: 'url_http', label: 'URL HTTP (Port 80)', value: proto + '://' + sampleUuid + '@' + sampleDomain + ':80?security=none&type=ws#' + sampleUser },
+              { key: 'url_grpc', label: 'URL gRPC (Port 443)', value: proto + '://' + sampleUuid + '@' + sampleDomain + ':443?mode=gun&security=tls&type=grpc#' + sampleUser },
+              { key: 'save_txt', label: 'Tautan Simpan .txt', value: 'http://' + sampleDomain + ':81/' + proto + '-' + sampleUser + '.txt' }
+            ];
+
+        const reportText = [
+          '[CONTOH PRATINJAU FORMAT OUTPUT - BUKAN KREDENSIAL AKTIF]',
+          'Protokol   : ' + proto.toUpperCase(),
+          'Username   : ' + sampleUser,
+          'Domain     : ' + sampleDomain,
+          'Masa Aktif : 1 Hari (Trial)',
+          'Tautan     : ' + links[0].value
+        ].join('\n');
+
+        return {
+          protocol: proto,
+          tier: 'trial',
+          account: {
+            username: sampleUser,
+            password: isSsh ? 'ContohPass12' : null,
+            uuid: isSsh ? null : sampleUuid,
+            cipher: proto === 'shadowsocks' ? 'aes-128-gcm' : null,
+            expired: '1 Hari (Pratinjau)',
+            quota: isSsh ? 'Sesuai kebijakan SSH node' : '5 GB',
+            iplimit: '2 IP'
+          },
+          server: {
+            name: 'Singapore Node 01 [CONTOH]',
+            region: 'Singapore',
+            isp: 'Example Cloud',
+            domain: sampleDomain,
+            ip: '203.0.113.10',
+            cloudfront: 'cf.example.com',
+            ns_domain: 'ns.sg1.example.com',
+            pubkey: '0123456789abcdef_contoh_pubkey'
+          },
+          ports: isSsh
+            ? { openssh: '22', dropbear: '109, 143', ssl_tls: '443', ws_http: '80, 8080' }
+            : { tls: '443', http: '80, 8080', grpc: '443', path_ws: '/' + proto },
+          links,
+          reportText
+        };
+      }
+
+      function validateFormInputs() {
+        els.usernameError.classList.add('hidden');
+        els.formErrorBanner.classList.add('hidden');
+
+        if (!state.serversConfigured || !els.serverSelect.value) {
+          els.formErrorBanner.textContent = 'Pilih node server aktif terlebih dahulu (pastikan VPN_SERVERS_JSON sudah dikonfigurasi).';
+          els.formErrorBanner.classList.remove('hidden');
+          return null;
+        }
+
+        const user = els.usernameInput.value.trim();
+        if (!user || !USERNAME_REGEX.test(user)) {
+          els.usernameError.textContent = 'Username wajib diisi hanya dengan huruf atau angka tanpa spasi maupun simbol.';
+          els.usernameError.classList.remove('hidden');
+          els.usernameInput.focus();
+          return null;
+        }
+
+        const payload = {
+          action: getCurrentActionName(),
+          serverId: els.serverSelect.value,
+          user
+        };
+
+        if (state.protocol === 'ssh') {
+          const password = els.passwordInput.value.trim();
+          if (!password || /\s/.test(password)) {
+            els.formErrorBanner.textContent = 'Password SSH wajib diisi dan tidak boleh mengandung spasi.';
+            els.formErrorBanner.classList.remove('hidden');
+            els.passwordInput.focus();
+            return null;
+          }
+          payload.password = password;
+        }
+
+        if (state.tier === 'premium') {
+          const exp = Number(els.expInput.value);
+          const iplimit = Number(els.ipLimitInput.value);
+          const quota = Number(els.quotaInput.value);
+          const adminPin = els.adminPinInput.value.trim();
+
+          if (!Number.isInteger(exp) || exp < 1 || exp > 365) {
+            els.formErrorBanner.textContent = 'Masa aktif wajib berupa angka bulat antara 1 sampai 365 hari.';
+            els.formErrorBanner.classList.remove('hidden');
+            els.expInput.focus();
+            return null;
+          }
+          if (!Number.isInteger(iplimit) || iplimit < 1 || iplimit > 100) {
+            els.formErrorBanner.textContent = 'Batas IP wajib berupa angka bulat antara 1 sampai 100.';
+            els.formErrorBanner.classList.remove('hidden');
+            els.ipLimitInput.focus();
+            return null;
+          }
+          if (state.protocol !== 'ssh' && (!Number.isInteger(quota) || quota < 0)) {
+            els.formErrorBanner.textContent = 'Kuota GB wajib berupa angka bulat 0 (Unlimited) atau lebih besar.';
+            els.formErrorBanner.classList.remove('hidden');
+            els.quotaInput.focus();
+            return null;
+          }
+          if (!adminPin) {
+            els.formErrorBanner.textContent = 'PIN Admin wajib diisi untuk menerbitkan akun Premium.';
+            els.formErrorBanner.classList.remove('hidden');
+            els.adminPinInput.focus();
+            return null;
+          }
+
+          payload.exp = exp;
+          payload.iplimit = iplimit;
+          if (state.protocol !== 'ssh') {
+            payload.quota = quota;
+          }
+          payload.adminPin = adminPin;
+        }
+
+        return payload;
+      }
+
+      async function handleFormSubmit(event) {
+        event.preventDefault();
+        const requestBody = validateFormInputs();
+        if (!requestBody) return;
+
+        els.submitBtn.disabled = true;
+        els.outputStatusTag.textContent = 'MEMPROSES';
+        showOutputView('loading');
+
+        try {
+          const response = await window.fetch('/api/vpn', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+          });
+
+          const result = await response.json();
+          if (!response.ok || result.status === 'error') {
+            throw new Error(result.message || 'Permintaan ditolak oleh server.');
+          }
+
+          state.lastResult = result;
+          state.previewActive = false;
+          els.togglePreviewBtn.setAttribute('aria-pressed', 'false');
+
+          if (result.server?.domain && result.server.domain !== '-') {
+            els.payloadServerDomain.value = result.server.domain;
+            updateSynthesizedPayload();
+          }
+
+          renderCredentialResult(result, false);
+        } catch (err) {
+          els.outputStatusTag.textContent = 'GAGAL';
+          els.outputErrorMessage.textContent = err.message || 'Gagal menghubungi endpoint /api/vpn.';
+          showOutputView('error');
+        } finally {
+          els.submitBtn.disabled = false;
+        }
+      }
+
+      function updateSynthesizedPayload() {
+        const domain = els.payloadServerDomain.value.trim() || 'sg1.example.com';
+        const bug = els.payloadBugHost.value.trim() || 'bug.example.com';
+        const mode = els.payloadModeSelect.value;
+        const path = els.payloadPathSelect.value || '/';
+
+        let output = '';
+        if (mode === 'dualray') {
+          output =
+            'GET /cdn-cgi/trace HTTP/1.1[crlf]Host: ' +
+            bug +
+            '[crlf][crlf]GET-RAY ' +
+            path +
+            ' HTTP/1.1[crlf]Host: ' +
+            domain +
+            '[crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf]Upgrade: websocket[crlf][crlf]';
+        } else if (mode === 'standard') {
+          output =
+            'GET ' +
+            path +
+            ' HTTP/1.1[crlf]Host: ' +
+            domain +
+            '[crlf]X-Forwarded-Host: ' +
+            bug +
+            '[crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf]Upgrade: websocket[crlf][crlf]';
+        } else {
+          output =
+            'PATCH ' +
+            path +
+            ' HTTP/1.1[crlf]Host: ' +
+            domain +
+            '[crlf]Host: ' +
+            bug +
+            '[crlf]Upgrade: websocket[crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf][crlf]';
+        }
+        els.customPayloadOutput.value = output;
+      }
+
+      function bindEvents() {
+        els.themeToggle.addEventListener('click', toggleTheme);
+
+        els.tierTrialBtn.addEventListener('click', () => {
+          state.tier = 'trial';
+          syncControlVisibility();
+        });
+
+        els.tierPremiumBtn.addEventListener('click', () => {
+          state.tier = 'premium';
+          syncControlVisibility();
+        });
+
+        for (const btn of els.protoBtns) {
+          btn.addEventListener('click', () => {
+            const nextProto = btn.getAttribute('data-protocol');
+            if (nextProto) {
+              state.protocol = nextProto;
+              syncControlVisibility();
+            }
+          });
+        }
+
+        els.reloadServersBtn.addEventListener('click', loadServers);
+        els.retryServersBtn.addEventListener('click', loadServers);
+
+        els.toggleSshPassBtn.addEventListener('click', () => {
+          const showing = els.passwordInput.type === 'text';
+          els.passwordInput.type = showing ? 'password' : 'text';
+          els.toggleSshPassBtn.setAttribute('aria-pressed', String(!showing));
+          els.toggleSshPassBtn.textContent = showing ? 'Tampilkan' : 'Sembunyikan';
+        });
+
+        els.randomSshPassBtn.addEventListener('click', () => {
+          els.passwordInput.value = generateRandomPassword(12);
+          els.passwordInput.type = 'text';
+          els.toggleSshPassBtn.setAttribute('aria-pressed', 'true');
+          els.toggleSshPassBtn.textContent = 'Sembunyikan';
+        });
+
+        els.togglePinBtn.addEventListener('click', () => {
+          const showing = els.adminPinInput.type === 'text';
+          els.adminPinInput.type = showing ? 'password' : 'text';
+          els.togglePinBtn.setAttribute('aria-pressed', String(!showing));
+          els.togglePinBtn.textContent = showing ? 'Tampilkan' : 'Sembunyikan';
+        });
+
+        els.usernameInput.addEventListener('input', () => {
+          const val = els.usernameInput.value.trim();
+          if (!val || USERNAME_REGEX.test(val)) {
+            els.usernameError.classList.add('hidden');
+          }
+        });
+
+        els.togglePreviewBtn.addEventListener('click', () => {
+          state.previewActive = true;
+          els.togglePreviewBtn.setAttribute('aria-pressed', 'true');
+          renderCredentialResult(buildSamplePreviewData(state.protocol), true);
+        });
+
+        els.vpnForm.addEventListener('submit', handleFormSubmit);
+
+        els.payloadServerDomain.addEventListener('input', updateSynthesizedPayload);
+        els.payloadBugHost.addEventListener('input', updateSynthesizedPayload);
+        els.payloadModeSelect.addEventListener('change', updateSynthesizedPayload);
+        els.payloadPathSelect.addEventListener('change', updateSynthesizedPayload);
+
+        els.copyCustomPayloadBtn.addEventListener('click', () => {
+          copyTextWithFeedback(els.copyCustomPayloadBtn, els.customPayloadOutput.value, 'Salin Payload');
+        });
+
+        els.resetPayloadBtn.addEventListener('click', () => {
+          els.payloadServerDomain.value = state.lastResult?.server?.domain || 'sg1.example.com';
+          els.payloadBugHost.value = 'bug.example.com';
+          els.payloadModeSelect.value = 'dualray';
+          els.payloadPathSelect.value = '/';
+          updateSynthesizedPayload();
+        });
+
+        els.copyEnvJsonBtn.addEventListener('click', () => {
+          copyTextWithFeedback(els.copyEnvJsonBtn, els.envJsonSnippet.textContent || '', 'Salin Contoh Env');
+        });
+      }
+
+      initTheme();
+      syncControlVisibility();
+      updateSynthesizedPayload();
+      bindEvents();
+      loadServers();
+    })();
+  </script>
+</body>
+</html>

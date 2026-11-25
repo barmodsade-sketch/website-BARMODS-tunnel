@@ -1,0 +1,17 @@
+{
+  "name": "doctor-barmods-vpn",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Doctor Barmods: Clinical Clean Ops multi-protocol VPN provisioning console and Vercel Serverless API.",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "start": "node dev-server.mjs",
+    "lint": "node scripts/validate.mjs --mode=lint",
+    "build": "node scripts/validate.mjs --mode=build",
+    "test": "node --test tests/vpn.test.mjs"
+  }
+}
